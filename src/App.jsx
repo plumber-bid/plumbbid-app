@@ -2,59 +2,69 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, MicOff, Calculator, Book, Settings, Trash2, 
   Plus, Check, Wrench, AlertTriangle, FileText, 
-  Upload, Copy, Box
+  Upload, Copy, Box, Download, Building2
 } from 'lucide-react';
 
 const TRANSLATIONS = {
   en: {
-    voiceTitle: 'Job Recorder', voiceDesc: "Speak or type your job details. We'll automatically extract hours and parts.", tapToSpeak: 'Tap to Speak', listening: 'Listening...', voicePlaceholder: 'E.g., Replaced a 200L water heater and two 22mm ball valves. Took about 3 hours.', buildQuote: 'Build Quote', parsingAi: 'Parsing AI...',
+    voiceTitle: 'Job Recorder', voiceDesc: "Speak or type your job details. We'll automatically extract hours and parts.", tapToSpeak: 'Tap to Speak', listening: 'Listening...', voicePlaceholder: 'E.g., Replaced a 200L water heater and two 22mm ball valves. Took about 3 hours.', buildQuote: 'Build Quote', parsingAi: 'Parsing AI...', clearText: 'Clear / Start Over', apiPlaceholder: 'Optional: Paste Gemini API key',
     dontForget: "Don't Forget Check", labor: 'Labor', estHours: 'Estimated Hours', hrs: 'hrs', partsMat: 'Parts & Materials', addItem: 'Add Item', noParts: 'No parts added yet.', missingPrice: 'Missing Wholesale Price', qty: 'Qty', wholesale: 'Wholesale',
     summary: 'Quote Summary', laborFee: 'Labor & Service Fee', matCost: 'Materials (Cost)', markup: 'Material Markup', subtotal: 'Subtotal', vat: 'VAT', total: 'Total', copyQuote: 'Copy Customer Quote', copyList: 'Copy Wholesaler Pick-List',
     profEst: 'Professional Estimate', laborServ: 'Labor & Services:', calloutFeeQuote: 'Callout/Service Fee:', materialsParts: 'Materials & Parts:', grandTotal: 'Grand Total:', valid30: 'Valid for 30 days. Let me know if you would like to proceed!', supplyList: 'Supply House Pick-List', reqAsap: 'Required for job ASAP.',
     localPb: 'Local Price Book', addPart: 'Add Part', searchParts: 'Search parts by name or code...', noPartsFound: 'No parts found.',
-    ratesFees: 'Rates & Fees', hourlyRate: 'Hourly Rate', calloutService: 'Callout / Service Fee', matMarkup: 'Material Markup %', vatMva: 'VAT / MVA %', aiInt: 'AI Integration', loc: 'Localization', currency: 'Currency', dictLang: 'Dictation & Output Language',
+    ratesFees: 'Rates & Fees', hourlyRate: 'Hourly Rate', calloutService: 'Callout / Service Fee', matMarkup: 'Material Markup %', vatMva: 'VAT %', aiInt: 'AI Integration', loc: 'Localization', currency: 'Currency', dictLang: 'Dictation & Output Language',
     tabVoice: 'Voice', tabQuote: 'Quote', tabParts: 'Parts', tabSettings: 'Settings',
-    suggPtfe: 'PTFE Tape', suggSilicone: 'Silicone Sealant', suggOlives: 'Compression Olives', suggDisposal: 'Old Unit Disposal'
+    suggPtfe: 'PTFE Tape', suggSilicone: 'Silicone Sealant', suggOlives: 'Compression Olives', suggDisposal: 'Old Unit Disposal',
+    termsLabel: 'Standard Terms / Disclaimers', termsDisclaimer: 'The quote assumes free access, tight and functioning stopcocks, and that existing pipework is in regulatory condition under 40 years old. Damage to old/adjacent equipment during dismantling, or to unknown hidden pipes/cables, is only covered in cases of gross negligence and will be repaired at cost. Additional work due to hidden defects, building work, electrician, and parking will be charged extra. We only install approved equipment; no equipment warranty is provided for customer-supplied equipment, and extra work is billed according to time and materials.',
+    companyName: 'Company Name', orgNo: 'Org. No / Tax ID', contactInfo: 'Contact (Phone/Email)', customerDetails: 'Customer Name / Address', includeTerms: 'Include Terms & Disclaimers', downloadPdf: 'Download / Share PDF', desc: 'Description', price: 'Price'
   },
   no: {
-    voiceTitle: 'Jobbregistrering', voiceDesc: "Snakk eller skriv inn jobbdetaljene. Vi trekker automatisk ut timer og deler.", tapToSpeak: 'Trykk for å snakke', listening: 'Lytter...', voicePlaceholder: 'F.eks., Byttet en 200L varmtvannsbereder og to 22mm kuleventiler. Brukte ca 3 timer.', buildQuote: 'Bygg tilbud', parsingAi: 'Tolker med AI...',
+    voiceTitle: 'Jobbregistrering', voiceDesc: "Snakk eller skriv inn jobbdetaljene. Vi trekker automatisk ut timer og deler.", tapToSpeak: 'Trykk for å snakke', listening: 'Lytter...', voicePlaceholder: 'F.eks., Byttet en 200L varmtvannsbereder og to 22mm kuleventiler. Brukte ca 3 timer.', buildQuote: 'Bygg tilbud', parsingAi: 'Tolker med AI...', clearText: 'Tøm / Start på nytt', apiPlaceholder: 'Valgfritt: Lim inn Gemini API-nøkkel',
     dontForget: "Ikke glem", labor: 'Arbeid', estHours: 'Estimerte timer', hrs: 'timer', partsMat: 'Deler & Materiell', addItem: 'Legg til', noParts: 'Ingen deler lagt til ennå.', missingPrice: 'Mangler innkjøpspris', qty: 'Ant', wholesale: 'Innkjøp',
     summary: 'Sammendrag', laborFee: 'Arbeid & Oppmøte', matCost: 'Materiell (Innkjøp)', markup: 'Påslag', subtotal: 'Subtotal', vat: 'MVA', total: 'Total', copyQuote: 'Kopier tilbud til kunde', copyList: 'Kopier plukkliste',
     profEst: 'Pristilbud', laborServ: 'Arbeid & Tjenester:', calloutFeeQuote: 'Oppmøte/Servicebil:', materialsParts: 'Deler & Materiell:', grandTotal: 'Totalsum:', valid30: 'Gyldig i 30 dager. Gi meg beskjed om du ønsker å gå videre!', supplyList: 'Plukkliste', reqAsap: 'Trengs til jobb ASAP.',
     localPb: 'Lokal Prisbok', addPart: 'Ny del', searchParts: 'Søk etter navn eller NRF/kode...', noPartsFound: 'Ingen deler funnet.',
     ratesFees: 'Priser & Avgifter', hourlyRate: 'Timepris', calloutService: 'Oppmøte / Servicebil', matMarkup: 'Påslag Materiell %', vatMva: 'MVA %', aiInt: 'AI Integrasjon', loc: 'Lokalisering', currency: 'Valuta', dictLang: 'Diktering og utspråk',
     tabVoice: 'Stemme', tabQuote: 'Tilbud', tabParts: 'Prisbok', tabSettings: 'Innstill.',
-    suggPtfe: 'Gjengeteip', suggSilicone: 'Silikon', suggOlives: 'Klemringer', suggDisposal: 'Kassering / Miljøgebyr'
+    suggPtfe: 'Gjengeteip', suggSilicone: 'Silikon', suggOlives: 'Klemringer', suggDisposal: 'Kassering / Miljøgebyr',
+    termsLabel: 'Standard Forbehold', termsDisclaimer: 'Tilbudet forutsetter fri tilgang, tette og fungerende stoppekraner, samt at eksisterende røranlegg er i forskriftsmessig stand under 40 år. Skader på gammelt/tilstøtende utstyr ved demontering, eller på ukjente skjulte rør/kabler, dekkes kun ved grov uaktsomhet og utbedres til kostpris. Tilleggsarbeid grunnet skjulte feil, bygningsmessig arbeid, elektriker og parkering kommer i tillegg. Vi monterer kun godkjent utstyr; på kundelevert utstyr gis ingen utstyrsgaranti, og merarbeid faktureres etter medgått tid og materiell.',
+    companyName: 'Firmanavn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo (Tlf/E-post)', customerDetails: 'Kunde / Adresse', includeTerms: 'Inkluder Forbehold i tilbud', downloadPdf: 'Last ned som PDF', desc: 'Beskrivelse', price: 'Pris'
   },
   sv: {
-    voiceTitle: 'Jobbregistrering', voiceDesc: "Prata eller skriv in dina jobbdetaljer. Vi extraherar automatiskt timmar och delar.", tapToSpeak: 'Tryck för att prata', listening: 'Lyssnar...', voicePlaceholder: 'T.ex., Bytte en 200L varmvattenberedare och två 22mm kulventiler. Tog ca 3 timmar.', buildQuote: 'Skapa offert', parsingAi: 'Tolkar med AI...',
+    voiceTitle: 'Jobbregistrering', voiceDesc: "Prata eller skriv in dina jobbdetaljer. Vi extraherar automatiskt timmar och delar.", tapToSpeak: 'Tryck för att prata', listening: 'Lyssnar...', voicePlaceholder: 'T.ex., Bytte en 200L varmvattenberedare och två 22mm kulventiler. Tog ca 3 timmar.', buildQuote: 'Skapa offert', parsingAi: 'Tolkar med AI...', clearText: 'Rensa / Börja om', apiPlaceholder: 'Valfritt: Klistra in Gemini API-nyckel',
     dontForget: "Glöm inte", labor: 'Arbete', estHours: 'Uppskattade timmar', hrs: 'tim', partsMat: 'Delar & Material', addItem: 'Lägg till', noParts: 'Inga delar tillagda ännu.', missingPrice: 'Saknar inköpspris', qty: 'Antal', wholesale: 'Inköp',
     summary: 'Sammanfattning', laborFee: 'Arbete & Inställelse', matCost: 'Material (Inköp)', markup: 'Påslag', subtotal: 'Subtotal', vat: 'Moms', total: 'Total', copyQuote: 'Kopiera kundoffert', copyList: 'Kopiera plocklista',
     profEst: 'Professionell Offert', laborServ: 'Arbete & Tjänster:', calloutFeeQuote: 'Inställelseavgift:', materialsParts: 'Delar & Material:', grandTotal: 'Totalsumma:', valid30: 'Giltig i 30 dagar. Meddela mig om du vill gå vidare!', supplyList: 'Plocklista', reqAsap: 'Behövs till jobb ASAP.',
-    localPb: 'Lokal Prisbok', addPart: 'Ny del', searchParts: 'Sök på namn eller RSK/kod...', noPartsFound: 'Inga delar hittades.',
+    localPb: 'Lokal Prisbok', addPart: 'Ny del', searchParts: 'Søk på namn eller RSK/kod...', noPartsFound: 'Inga delar hittades.',
     ratesFees: 'Priser & Avgifter', hourlyRate: 'Timpris', calloutService: 'Inställelseavgift', matMarkup: 'Påslag Material %', vatMva: 'Moms %', aiInt: 'AI Integration', loc: 'Lokalisering', currency: 'Valuta', dictLang: 'Språk',
     tabVoice: 'Röst', tabQuote: 'Offert', tabParts: 'Prisbok', tabSettings: 'Inställ.',
-    suggPtfe: 'Gängtejp', suggSilicone: 'Silikon', suggOlives: 'Klämringar', suggDisposal: 'Bortskaffande avgift'
+    suggPtfe: 'Gängtejp', suggSilicone: 'Silikon', suggOlives: 'Klämringar', suggDisposal: 'Bortskaffande avgift',
+    termsLabel: 'Standardvillkor / Förbehåll', termsDisclaimer: '1. Arbetsområdet måste vara tillgängligt.\n2. Huvudkran måste fungera.\n3. Inget ansvar för rör äldre än 40 år.\n4. Ingen garanti på kundens eget material.\n5. Priset exkluderar dolda fel och parkering.',
+    companyName: 'Företagsnamn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo', customerDetails: 'Kund / Adress', includeTerms: 'Inkludera Villkor', downloadPdf: 'Ladda ner PDF', desc: 'Beskrivning', price: 'Pris'
   },
   de: {
-    voiceTitle: 'Auftragsaufnahme', voiceDesc: "Sprechen oder tippen Sie. Wir extrahieren Stunden und Teile.", tapToSpeak: 'Sprechen', listening: 'Hört zu...', voicePlaceholder: 'Z.B. Einen 200L Boiler und zwei 22mm Kugelventile ausgetauscht.', buildQuote: 'Angebot erstellen', parsingAi: 'KI verarbeitet...',
+    voiceTitle: 'Auftragsaufnahme', voiceDesc: "Sprechen oder tippen Sie. Wir extrahieren Stunden und Teile.", tapToSpeak: 'Sprechen', listening: 'Hört zu...', voicePlaceholder: 'Z.B. Einen 200L Boiler und zwei 22mm Kugelventile ausgetauscht.', buildQuote: 'Angebot erstellen', parsingAi: 'KI verarbeitet...', clearText: 'Löschen / Neu starten', apiPlaceholder: 'Optional: Gemini API-Schlüssel einfügen',
     dontForget: "Nicht vergessen", labor: 'Arbeitszeit', estHours: 'Geschätzte Stunden', hrs: 'Std', partsMat: 'Teile & Material', addItem: 'Hinzufügen', noParts: 'Noch keine Teile hinzugefügt.', missingPrice: 'Preis fehlt', qty: 'Menge', wholesale: 'Einkauf',
     summary: 'Zusammenfassung', laborFee: 'Arbeit & Anfahrt', matCost: 'Material (Einkauf)', markup: 'Materialaufschlag', subtotal: 'Zwischensumme', vat: 'MwSt.', total: 'Gesamt', copyQuote: 'Kundenangebot kopieren', copyList: 'Materialliste kopieren',
     profEst: 'Kostenvoranschlag', laborServ: 'Arbeit & Dienstleistungen:', calloutFeeQuote: 'Anfahrt/Servicepauschale:', materialsParts: 'Teile & Material:', grandTotal: 'Gesamtsumme:', valid30: '30 Tage gültig. Geben Sie Bescheid, ob wir fortfahren sollen!', supplyList: 'Material-Pickliste', reqAsap: 'Dringend für Auftrag benötigt.',
     localPb: 'Lokales Preisbuch', addPart: 'Teil hinzufügen', searchParts: 'Suchen...', noPartsFound: 'Keine Teile gefunden.',
     ratesFees: 'Preise & Gebühren', hourlyRate: 'Stundensatz', calloutService: 'Anfahrt / Service', matMarkup: 'Materialaufschlag %', vatMva: 'MwSt. %', aiInt: 'KI-Integration', loc: 'Lokalisierung', currency: 'Währung', dictLang: 'Sprache',
     tabVoice: 'Sprache', tabQuote: 'Angebot', tabParts: 'Preisbuch', tabSettings: 'Einstell.',
-    suggPtfe: 'Teflonband', suggSilicone: 'Silikon', suggOlives: 'Klemmringe', suggDisposal: 'Entsorgung'
+    suggPtfe: 'Teflonband', suggSilicone: 'Silikon', suggOlives: 'Klemmringe', suggDisposal: 'Entsorgung',
+    termsLabel: 'Allgemeine Bedingungen', termsDisclaimer: '1. Arbeitsbereich muss frei zugänglich sein.\n2. Absperrventile müssen funktionieren.\n3. Keine Haftung für Rohre älter als 40 Jahre.\n4. Keine Garantie auf vom Kunden bereitgestellte Teile.\n5. Schließt versteckte Mängel und Parkgebühren aus.',
+    companyName: 'Firmenname', orgNo: 'Steuernummer', contactInfo: 'Kontaktinfo', customerDetails: 'Kunde / Adresse', includeTerms: 'Bedingungen einschließen', downloadPdf: 'PDF Herunterladen', desc: 'Beschreibung', price: 'Preis'
   },
   es: {
-    voiceTitle: 'Registro de Trabajo', voiceDesc: "Hable o escriba. Extraemos horas y piezas.", tapToSpeak: 'Tocar para hablar', listening: 'Escuchando...', voicePlaceholder: 'Ej: Reemplazado calentador 200L y dos válvulas de 22mm.', buildQuote: 'Crear Presup.', parsingAi: 'Procesando IA...',
+    voiceTitle: 'Registro de Trabajo', voiceDesc: "Hable o escriba. Extraemos horas y piezas.", tapToSpeak: 'Tocar para hablar', listening: 'Escuchando...', voicePlaceholder: 'Ej: Reemplazado calentador 200L y dos válvulas de 22mm.', buildQuote: 'Crear Presup.', parsingAi: 'Procesando IA...', clearText: 'Borrar / Empezar de nuevo', apiPlaceholder: 'Opcional: Pegar clave API de Gemini',
     dontForget: "No Olvidar", labor: 'Mano de Obra', estHours: 'Horas Estimadas', hrs: 'hrs', partsMat: 'Piezas y Materiales', addItem: 'Añadir', noParts: 'No hay piezas añadidas.', missingPrice: 'Falta precio', qty: 'Cant', wholesale: 'Mayorista',
     summary: 'Resumen', laborFee: 'Trabajo y Desplazamiento', matCost: 'Materiales (Costo)', markup: 'Margen', subtotal: 'Subtotal', vat: 'IVA', total: 'Total', copyQuote: 'Copiar Presupuesto', copyList: 'Copiar Lista',
     profEst: 'Presupuesto Profesional', laborServ: 'Mano de Obra y Servicios:', calloutFeeQuote: 'Desplazamiento/Servicio:', materialsParts: 'Materiales y Piezas:', grandTotal: 'Total:', valid30: 'Válido por 30 días. ¡Avíseme si desea continuar!', supplyList: 'Lista de Materiales', reqAsap: 'Requerido para trabajo urgente.',
     localPb: 'Catálogo de Precios', addPart: 'Añadir Pieza', searchParts: 'Buscar piezas...', noPartsFound: 'No se encontraron piezas.',
     ratesFees: 'Tarifas y Precios', hourlyRate: 'Tarifa Horaria', calloutService: 'Desplazamiento / Servicio', matMarkup: 'Margen Material %', vatMva: 'IVA %', aiInt: 'Integración IA', loc: 'Localización', currency: 'Moneda', dictLang: 'Idioma',
     tabVoice: 'Voz', tabQuote: 'Presup.', tabParts: 'Catálogo', tabSettings: 'Ajustes',
-    suggPtfe: 'Cinta de teflón', suggSilicone: 'Silicona', suggOlives: 'Anillos de compresión', suggDisposal: 'Desecho viejo'
+    suggPtfe: 'Cinta de teflón', suggSilicone: 'Silicona', suggOlives: 'Anillos de compresión', suggDisposal: 'Desecho viejo',
+    termsLabel: 'Condiciones Generales', termsDisclaimer: '1. El área debe estar accesible.\n2. Las llaves de paso deben funcionar.\n3. Sin responsabilidad por tuberías de más de 40 años.\n4. Sin garantía en materiales del cliente.\n5. Excluye vicios ocultos y aparcamiento.',
+    companyName: 'Nombre de Empresa', orgNo: 'NIF / CIF', contactInfo: 'Contacto', customerDetails: 'Cliente / Dirección', includeTerms: 'Incluir Condiciones', downloadPdf: 'Descargar PDF', desc: 'Descripción', price: 'Precio'
   }
 };
 
@@ -66,7 +76,10 @@ const DEFAULT_SETTINGS = {
   vatPercent: 25,
   currency: 'NOK',
   language: 'no-NO',
-  geminiApiKey: ''
+  companyName: '',
+  orgNo: '',
+  contactInfo: '',
+  termsText: ''
 };
 
 const DEFAULT_PRICE_BOOK = [
@@ -107,7 +120,7 @@ export default function App() {
 
   const [quote, setQuote] = useState(() => {
     const saved = localStorage.getItem('plumbbid_quote');
-    return saved ? JSON.parse(saved) : { laborHours: 0, parts: [], notes: '' };
+    return saved ? JSON.parse(saved) : { laborHours: 0, parts: [], notes: '', customerDetails: '', includeTerms: true };
   });
 
   const langCode = settings.language.split('-')[0] || 'en';
@@ -172,8 +185,43 @@ export default function App() {
       return;
     }
 
-    if (!settings.geminiApiKey) {
-      showToast("No API Key. Using advanced local fallback parser.");
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/parse-job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transcript: text,
+          priceBook: priceBook.map(p => ({ id: p.id, name: p.name, code: p.code, cost: p.cost })),
+          language: settings.language,
+          currency: settings.currency
+        })
+      });
+
+      if (!response.ok) throw new Error("API Error");
+      
+      const parsedData = await response.json();
+
+      const partsWithIds = (parsedData.items || parsedData.parts || []).map(p => ({
+        ...p,
+        quoteItemId: Math.random().toString(36).substr(2, 9),
+        id: p.id || Math.random().toString(36).substr(2, 9),
+        code: p.code || '',
+        cost: p.cost || 0
+      }));
+
+      setQuote({
+        laborHours: parsedData.hours || parsedData.laborHours || 1,
+        parts: partsWithIds,
+        notes: parsedData.customerSummary || parsedData.summaryNotes || text,
+      });
+      
+      setActiveTab('quote');
+      showToast("Smart Quote generated successfully!");
+    } catch (error) {
+      console.error("API Error, falling back to local parser", error);
+      showToast("Using advanced local fallback parser.");
+      
       let extractedHours = 0;
       const hourRegex = /(\d+(?:\.\d+)?)\s*(?:hour|hours|hr|hrs|time|timer)/i;
       const hourMatch = text.match(hourRegex);
@@ -255,83 +303,6 @@ export default function App() {
         notes: text,
       });
       setActiveTab('quote');
-      return;
-    }
-
-    setIsGenerating(true);
-    try {
-      const systemPrompt = `You are a plumbing estimator AI. Parse the plumber's raw voice notes into structured data.
-      Requested Output Language: ${settings.language}.
-      Task:
-      1. Extract labor hours (number). Default to 1 if not specified.
-      2. Match parts mentioned to the provided Price Book exactly.
-      3. If a part is mentioned that is NOT in the Price Book, include it anyway with cost 0 and empty code so the plumber can price it later.
-      4. Write a brief, professional customer-facing summary of the work in the requested output language.
-      
-      Price Book:
-      ${JSON.stringify(priceBook.map(p => ({id: p.id, name: p.name, code: p.code, cost: p.cost})))}`;
-
-      const payload = {
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ role: "user", parts: [{ text: `Job Notes: ${text}` }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "OBJECT",
-            properties: {
-              laborHours: { type: "NUMBER" },
-              summaryNotes: { type: "STRING" },
-              parts: {
-                type: "ARRAY",
-                items: {
-                  type: "OBJECT",
-                  properties: {
-                    id: { type: "STRING" },
-                    name: { type: "STRING" },
-                    code: { type: "STRING" },
-                    cost: { type: "NUMBER" },
-                    quantity: { type: "NUMBER" }
-                  },
-                  required: ["name", "cost", "quantity"]
-                }
-              }
-            },
-            required: ["laborHours", "summaryNotes", "parts"]
-          }
-        }
-      };
-
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${settings.geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) throw new Error("API Error");
-      
-      const result = await response.json();
-      const jsonText = result.candidates[0].content.parts[0].text;
-      const parsedData = JSON.parse(jsonText);
-
-      const partsWithIds = parsedData.parts.map(p => ({
-        ...p,
-        quoteItemId: Math.random().toString(36).substr(2, 9),
-        id: p.id || Math.random().toString(36).substr(2, 9),
-        code: p.code || '',
-        cost: p.cost || 0
-      }));
-
-      setQuote({
-        laborHours: parsedData.laborHours || 1,
-        parts: partsWithIds,
-        notes: parsedData.summaryNotes || text,
-      });
-      
-      setActiveTab('quote');
-      showToast("Smart Quote generated with Gemini!");
-    } catch (error) {
-      console.error(error);
-      showToast("AI Parsing failed. Check API key or try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -343,6 +314,7 @@ export default function App() {
     const [isRecording, setIsRecording] = useState(false);
     const [transcript, setTranscript] = useState(quote.notes || '');
     const recognitionRef = useRef(null);
+    const textBeforeRecRef = useRef('');
 
     useEffect(() => {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -353,11 +325,12 @@ export default function App() {
         recognitionRef.current.lang = settings.language;
         
         recognitionRef.current.onresult = (event) => {
-          let currentTranscript = '';
-          for (let i = 0; i < event.results.length; i++) {
-            currentTranscript += event.results[i][0].transcript;
+          let sessionTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            sessionTranscript += event.results[i][0].transcript;
           }
-          setTranscript(currentTranscript);
+          const base = textBeforeRecRef.current;
+          setTranscript(base + (base && sessionTranscript ? ' ' : '') + sessionTranscript);
         };
 
         recognitionRef.current.onerror = (event) => {
@@ -380,8 +353,26 @@ export default function App() {
         recognitionRef.current.stop();
         setIsRecording(false);
       } else {
+        textBeforeRecRef.current = transcript;
         recognitionRef.current.start();
         setIsRecording(true);
+      }
+    };
+
+    const handleClear = () => {
+      if (isRecording) {
+        recognitionRef.current?.stop();
+        setIsRecording(false);
+      }
+      setTranscript('');
+      setQuote({ ...quote, notes: '' });
+      textBeforeRecRef.current = '';
+    };
+
+    const handleTextareaFocus = () => {
+      if (isRecording) {
+        recognitionRef.current?.stop();
+        setIsRecording(false);
       }
     };
 
@@ -401,11 +392,23 @@ export default function App() {
         </button>
 
         <div className="w-full space-y-4">
+          <div className="flex justify-end">
+            <button 
+              onClick={handleClear}
+              className="text-slate-500 hover:text-red-500 flex items-center gap-1 text-sm font-semibold transition-colors"
+            >
+              <Trash2 size={16} /> {t('clearText')}
+            </button>
+          </div>
           <textarea 
             className="w-full p-4 rounded-xl border-2 border-slate-200 bg-white focus:border-orange-500 focus:ring-0 resize-none h-32 text-slate-800 placeholder-slate-400 transition-colors shadow-inner"
             placeholder={t('voicePlaceholder')}
             value={transcript}
-            onChange={(e) => setTranscript(e.target.value)}
+            onFocus={handleTextareaFocus}
+            onChange={(e) => {
+              setTranscript(e.target.value);
+              textBeforeRecRef.current = e.target.value;
+            }}
           />
           <button 
             onClick={() => handleGenerateQuote(transcript)}
@@ -431,6 +434,9 @@ export default function App() {
     const subtotal = laborCost + materialsTotal;
     const tax = subtotal * (settings.vatPercent / 100);
     const total = subtotal + tax;
+
+    const includeTermsSafe = quote.includeTerms !== false;
+    const currentTerms = settings.termsText || t('termsDisclaimer');
 
     const updatePart = (index, field, value) => {
       const newParts = [...quote.parts];
@@ -475,6 +481,11 @@ export default function App() {
       text += `${t('vat')} (${settings.vatPercent}%): ${formatMoney(tax)}\n`;
       text += `${t('grandTotal')} ${formatMoney(total)}\n\n`;
       text += t('valid30');
+
+      if (includeTermsSafe) {
+        text += `\n\n${t('termsLabel')}:\n${currentTerms}`;
+      }
+      
       return text;
     };
 
@@ -488,9 +499,27 @@ export default function App() {
       return text;
     };
 
+    const handlePrint = () => {
+      window.print();
+    };
+
     return (
-      <div className="max-w-2xl mx-auto w-full pb-6 space-y-6 animate-fade-in">
+      <>
+      <div className="max-w-2xl mx-auto w-full pb-6 space-y-6 animate-fade-in no-print-area">
         
+        {/* Customer Details Section */}
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <h3 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <Building2 size={20} className="text-orange-500" /> {t('customerDetails')}
+          </h3>
+          <textarea 
+            className="w-full p-3 border rounded-xl bg-slate-50 focus:border-orange-500 focus:bg-white transition-colors resize-none h-24"
+            placeholder={t('customerDetails') + " (Optional)"}
+            value={quote.customerDetails || ''}
+            onChange={(e) => setQuote({...quote, customerDetails: e.target.value})}
+          />
+        </div>
+
         {/* Quick Suggestions */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{t('dontForget')}</h3>
@@ -629,14 +658,33 @@ export default function App() {
           </div>
         </div>
 
+        {/* Terms Toggle */}
+        <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <span className="font-bold text-slate-700">{t('includeTerms')}</span>
+          <button 
+            onClick={() => setQuote({...quote, includeTerms: !includeTermsSafe})}
+            className={`w-14 h-7 rounded-full transition-colors flex items-center px-1 shadow-inner ${includeTermsSafe ? 'bg-orange-500 justify-end' : 'bg-slate-300 justify-start'}`}
+          >
+            <div className="w-5 h-5 bg-white rounded-full shadow-md"></div>
+          </button>
+        </div>
+
         {/* Actions */}
         <div className="flex flex-col gap-3">
-          <button 
-            onClick={() => copyToClipboard(generateCustomerQuoteText(), t('quoteCopied'))}
-            className="w-full bg-orange-500 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-orange-500/30 hover:bg-orange-600 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <Copy size={20} /> {t('copyQuote')}
-          </button>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => copyToClipboard(generateCustomerQuoteText(), t('quoteCopied'))}
+              className="flex-1 bg-orange-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-500/30 hover:bg-orange-600 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <Copy size={20} /> <span className="hidden sm:inline">{t('copyQuote')}</span><span className="sm:hidden">Copy</span>
+            </button>
+            <button 
+              onClick={handlePrint}
+              className="flex-1 bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <Download size={20} /> <span className="hidden sm:inline">{t('downloadPdf')}</span><span className="sm:hidden">PDF</span>
+            </button>
+          </div>
           <button 
             onClick={() => copyToClipboard(generatePickListText(), t('listCopied'))}
             className="w-full bg-white text-slate-800 border-2 border-slate-200 font-bold text-lg py-4 rounded-xl shadow-sm hover:border-slate-300 active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -646,6 +694,89 @@ export default function App() {
         </div>
 
       </div>
+
+      {/* Print/PDF Section (Hidden on screen, visible on print) */}
+      <div className="print-only-area hidden">
+         <div className="flex justify-between border-b-2 border-slate-200 pb-6 mb-6">
+           <div>
+             <h1 className="text-3xl font-black text-slate-900">{settings.companyName || 'PlumbBid Estimate'}</h1>
+             {settings.orgNo && <p className="text-slate-600 mt-1">{t('orgNo')}: {settings.orgNo}</p>}
+             {settings.contactInfo && <p className="text-slate-600">{settings.contactInfo}</p>}
+           </div>
+           <div className="text-right">
+             <h2 className="text-2xl font-bold text-orange-600 uppercase tracking-widest">{t('profEst')}</h2>
+             <p className="text-slate-500 mt-1 font-medium">{new Date().toLocaleDateString(settings.language)}</p>
+           </div>
+         </div>
+         
+         {(quote.customerDetails) && (
+           <div className="mb-8 p-4 bg-slate-50 rounded-lg">
+             <h3 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-2">{t('customerDetails')}:</h3>
+             <p className="whitespace-pre-wrap font-medium">{quote.customerDetails}</p>
+           </div>
+         )}
+
+         <table className="w-full mb-8 text-sm">
+           <thead>
+             <tr className="border-b-2 border-slate-800 text-left text-slate-700">
+               <th className="pb-3 font-bold">{t('desc') || 'Description'}</th>
+               <th className="pb-3 text-right font-bold">{t('qty')}</th>
+               <th className="pb-3 text-right font-bold">{t('price') || 'Price'}</th>
+               <th className="pb-3 text-right font-bold">{t('total')}</th>
+             </tr>
+           </thead>
+           <tbody className="text-slate-800">
+             <tr className="border-b border-slate-200">
+               <td className="py-3 font-medium">{t('calloutService')}</td>
+               <td className="py-3 text-right">1</td>
+               <td className="py-3 text-right">{formatMoney(settings.calloutFee)}</td>
+               <td className="py-3 text-right font-semibold">{formatMoney(settings.calloutFee)}</td>
+             </tr>
+             <tr className="border-b border-slate-200">
+               <td className="py-3 font-medium">{t('labor')}</td>
+               <td className="py-3 text-right">{quote.laborHours}</td>
+               <td className="py-3 text-right">{formatMoney(settings.hourlyRate)}</td>
+               <td className="py-3 text-right font-semibold">{formatMoney(quote.laborHours * settings.hourlyRate)}</td>
+             </tr>
+             {quote.parts.map((p, i) => {
+               const priceWithMarkup = p.cost * (1 + settings.markupPercent/100);
+               return (
+                 <tr key={i} className="border-b border-slate-100">
+                   <td className="py-3 font-medium">{p.name}</td>
+                   <td className="py-3 text-right">{p.quantity}</td>
+                   <td className="py-3 text-right">{formatMoney(priceWithMarkup)}</td>
+                   <td className="py-3 text-right font-semibold">{formatMoney(priceWithMarkup * p.quantity)}</td>
+                 </tr>
+               )
+             })}
+           </tbody>
+         </table>
+
+         <div className="flex justify-end mb-12">
+           <div className="w-full max-w-sm">
+             <div className="flex justify-between py-2 text-slate-600">
+               <span className="font-medium">{t('subtotal')}:</span>
+               <span className="font-bold">{formatMoney(subtotal)}</span>
+             </div>
+             <div className="flex justify-between py-2 text-slate-600">
+               <span className="font-medium">{t('vat')} ({settings.vatPercent}%):</span>
+               <span className="font-bold">{formatMoney(tax)}</span>
+             </div>
+             <div className="flex justify-between py-4 text-xl border-t-2 border-slate-800 mt-2 text-slate-900">
+               <span className="font-black">{t('grandTotal')}:</span>
+               <span className="font-black">{formatMoney(total)}</span>
+             </div>
+           </div>
+         </div>
+
+         {includeTermsSafe && (
+           <div className="text-xs text-slate-500 mt-8 pt-6 border-t-2 border-slate-100">
+             <h4 className="font-bold text-slate-700 uppercase tracking-wider mb-3">{t('termsLabel')}</h4>
+             <p className="whitespace-pre-wrap leading-relaxed">{currentTerms}</p>
+           </div>
+         )}
+      </div>
+      </>
     );
   };
 
@@ -774,6 +905,44 @@ export default function App() {
 
     return (
       <div className="max-w-2xl mx-auto w-full space-y-6 animate-fade-in pb-6">
+        
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+           <h3 className="font-bold text-lg text-slate-800 mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
+             <Building2 className="text-orange-500" size={20}/> {t('companyName') || 'Company Details'}
+           </h3>
+           <div className="space-y-4">
+              <div className="flex flex-col gap-2">
+                  <label className="text-slate-600 font-medium">{t('companyName')}</label>
+                  <input type="text" placeholder="e.g. Acme Plumbing AS" className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.companyName || ''} onChange={e => updateSetting('companyName', e.target.value)} />
+              </div>
+              <div className="flex flex-col gap-2">
+                  <label className="text-slate-600 font-medium">{t('orgNo')}</label>
+                  <input type="text" placeholder="e.g. 987 654 321" className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.orgNo || ''} onChange={e => updateSetting('orgNo', e.target.value)} />
+              </div>
+              <div className="flex flex-col gap-2">
+                  <label className="text-slate-600 font-medium">{t('contactInfo')}</label>
+                  <input type="text" placeholder="e.g. +47 123 45 678 / post@acme.no" className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.contactInfo || ''} onChange={e => updateSetting('contactInfo', e.target.value)} />
+              </div>
+           </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+           <h3 className="font-bold text-lg text-slate-800 mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
+             <FileText className="text-orange-500" size={20}/> {t('termsLabel')}
+           </h3>
+           <div className="space-y-4">
+              <div className="flex flex-col gap-2">
+                  <p className="text-xs text-slate-500 mb-2">{t('termsLabel')} will be attached to PDF quotes and text copies if enabled.</p>
+                  <textarea 
+                    className="border-2 border-slate-100 rounded-lg p-3 font-medium focus:border-orange-500 w-full h-40 resize-none text-sm text-slate-700" 
+                    value={settings.termsText !== undefined ? settings.termsText : t('termsDisclaimer')} 
+                    onChange={e => updateSetting('termsText', e.target.value)} 
+                  />
+                  <button onClick={() => updateSetting('termsText', t('termsDisclaimer'))} className="text-xs text-orange-600 font-semibold self-end mt-1 hover:underline">Reset to Default</button>
+              </div>
+           </div>
+        </div>
+
         <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
            <h3 className="font-bold text-lg text-slate-800 mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
              <Settings className="text-orange-500" size={20}/> {t('ratesFees')}
@@ -802,25 +971,6 @@ export default function App() {
                     <input type="number" className="border-2 border-slate-100 rounded-lg p-2 w-20 text-right font-bold focus:border-orange-500" value={settings.vatPercent} onChange={e => updateSetting('vatPercent', parseFloat(e.target.value)||0)} />
                     <span className="text-slate-400 font-bold">%</span>
                   </div>
-              </div>
-           </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-           <h3 className="font-bold text-lg text-slate-800 mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
-             <Settings className="text-orange-500" size={20}/> {t('aiInt')}
-           </h3>
-           <div className="space-y-4">
-              <div className="flex flex-col gap-2">
-                  <label className="text-slate-600 font-medium">Gemini API Key (gemini-2.5-flash)</label>
-                  <input
-                    type="password"
-                    placeholder="AIzaSy..."
-                    className="border-2 border-slate-100 rounded-lg p-2 bg-slate-50 font-bold focus:border-orange-500 w-full text-sm"
-                    value={settings.geminiApiKey}
-                    onChange={e => updateSetting('geminiApiKey', e.target.value)}
-                  />
-                  <p className="text-xs text-slate-400">Securely stored locally. Enables smart multi-lingual voice parsing and auto-translation.</p>
               </div>
            </div>
         </div>
@@ -927,6 +1077,14 @@ export default function App() {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Print Specific CSS */
+        @media print {
+          body, html { background-color: white !important; margin: 0; padding: 0; }
+          header, nav, .no-print-area { display: none !important; }
+          .print-only-area { display: block !important; width: 100%; color: black; }
+          @page { margin: 1.5cm; }
+        }
       `}} />
     </div>
   );
