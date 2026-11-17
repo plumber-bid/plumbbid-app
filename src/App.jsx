@@ -228,7 +228,8 @@ export default function App() {
           transcript: text,
           priceBook: priceBook.map(p => ({ id: p.id, name: p.name, code: p.code, cost: p.cost })),
           language: settings.language,
-          currency: settings.currency
+          currency: settings.currency,
+          systemInstruction: 'Act as a plumbing speech-correction filter. Automatically fix common phonetic speech-to-text mishearings (e.g., \'kule ventil\' -> \'kuleventil\', \'varmt vanns bereder\' -> \'varmtvannsbereder\', \'blande batteri\' -> \'blandebatteri\', \'pea trap\' -> \'P-trap\') before extracting hours and parts.'
         })
       });
 
@@ -359,12 +360,25 @@ export default function App() {
         recognitionRef.current.lang = settings.language;
         
         recognitionRef.current.onresult = (event) => {
-          let sessionTranscript = '';
+          let finalSeg = '';
+          let interimSeg = '';
           for (let i = event.resultIndex; i < event.results.length; i++) {
-            sessionTranscript += event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalSeg += event.results[i][0].transcript;
+            } else {
+              interimSeg += event.results[i][0].transcript;
+            }
           }
-          const base = textBeforeRecRef.current;
-          setTranscript(base + (base && sessionTranscript ? ' ' : '') + sessionTranscript);
+          
+          // Bake final results permanently into the base reference so it's never lost
+          if (finalSeg) {
+             const spacer = textBeforeRecRef.current.trim() && finalSeg.trim() ? ' ' : '';
+             textBeforeRecRef.current = textBeforeRecRef.current + spacer + finalSeg;
+          }
+          
+          // Display the permanently saved base + any current interim guessing
+          const displaySpacer = textBeforeRecRef.current.trim() && interimSeg.trim() ? ' ' : '';
+          setTranscript(textBeforeRecRef.current + displaySpacer + interimSeg);
         };
 
         recognitionRef.current.onerror = (event) => {
