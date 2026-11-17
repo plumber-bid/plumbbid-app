@@ -16,7 +16,8 @@ const TRANSLATIONS = {
     tabVoice: 'Voice', tabQuote: 'Quote', tabParts: 'Parts', tabSettings: 'Settings',
     suggPtfe: 'PTFE Tape', suggSilicone: 'Silicone Sealant', suggOlives: 'Compression Olives', suggDisposal: 'Old Unit Disposal',
     termsLabel: 'Standard Terms / Disclaimers', termsDisclaimer: 'The quote assumes free access, tight and functioning stopcocks, and that existing pipework is in regulatory condition under 40 years old. Damage to old/adjacent equipment during dismantling, or to unknown hidden pipes/cables, is only covered in cases of gross negligence and will be repaired at cost. Additional work due to hidden defects, building work, electrician, and parking will be charged extra. We only install approved equipment; no equipment warranty is provided for customer-supplied equipment, and extra work is billed according to time and materials.',
-    companyName: 'Company Name', orgNo: 'Org. No / Tax ID', contactInfo: 'Contact (Phone/Email)', customerDetails: 'Customer Name / Address', includeTerms: 'Include Terms & Disclaimers', downloadPdf: 'Download / Share PDF', desc: 'Description', price: 'Price'
+    companyName: 'Company Name', orgNo: 'Org. No / Tax ID', contactInfo: 'Contact (Phone/Email)', customerDetails: 'Customer Name / Address', includeTerms: 'Include Terms & Disclaimers', downloadPdf: 'Download / Share PDF', desc: 'Description', price: 'Price',
+    phCompany: 'e.g. Smith Plumbing Ltd', phOrg: 'Tax / Reg. No', phContact: 'Phone / Email', resetQuote: 'Reset Quote'
   },
   no: {
     voiceTitle: 'Jobbregistrering', voiceDesc: "Snakk eller skriv inn jobbdetaljene. Vi trekker automatisk ut timer og deler.", tapToSpeak: 'Trykk for å snakke', listening: 'Lytter...', voicePlaceholder: 'F.eks., Byttet en 200L varmtvannsbereder og to 22mm kuleventiler. Brukte ca 3 timer.', buildQuote: 'Bygg tilbud', parsingAi: 'Tolker med AI...', clearText: 'Tøm / Start på nytt', apiPlaceholder: 'Valgfritt: Lim inn Gemini API-nøkkel',
@@ -28,7 +29,8 @@ const TRANSLATIONS = {
     tabVoice: 'Stemme', tabQuote: 'Tilbud', tabParts: 'Prisbok', tabSettings: 'Innstill.',
     suggPtfe: 'Gjengeteip', suggSilicone: 'Silikon', suggOlives: 'Klemringer', suggDisposal: 'Kassering / Miljøgebyr',
     termsLabel: 'Standard Forbehold', termsDisclaimer: 'Tilbudet forutsetter fri tilgang, tette og fungerende stoppekraner, samt at eksisterende røranlegg er i forskriftsmessig stand under 40 år. Skader på gammelt/tilstøtende utstyr ved demontering, eller på ukjente skjulte rør/kabler, dekkes kun ved grov uaktsomhet og utbedres til kostpris. Tilleggsarbeid grunnet skjulte feil, bygningsmessig arbeid, elektriker og parkering kommer i tillegg. Vi monterer kun godkjent utstyr; på kundelevert utstyr gis ingen utstyrsgaranti, og merarbeid faktureres etter medgått tid og materiell.',
-    companyName: 'Firmanavn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo (Tlf/E-post)', customerDetails: 'Kunde / Adresse', includeTerms: 'Inkluder Forbehold i tilbud', downloadPdf: 'Last ned som PDF', desc: 'Beskrivelse', price: 'Pris'
+    companyName: 'Firmanavn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo (Tlf/E-post)', customerDetails: 'Kunde / Adresse', includeTerms: 'Inkluder Forbehold i tilbud', downloadPdf: 'Last ned som PDF', desc: 'Beskrivelse', price: 'Pris',
+    phCompany: 'F.eks. Hansen Rør AS', phOrg: 'Org.nr (9 siffer)', phContact: 'Telefon / E-post', resetQuote: 'Nullstill tilbud'
   },
   sv: {
     voiceTitle: 'Jobbregistrering', voiceDesc: "Prata eller skriv in dina jobbdetaljer. Vi extraherar automatiskt timmar och delar.", tapToSpeak: 'Tryck för att prata', listening: 'Lyssnar...', voicePlaceholder: 'T.ex., Bytte en 200L varmvattenberedare och två 22mm kulventiler. Tog ca 3 timmar.', buildQuote: 'Skapa offert', parsingAi: 'Tolkar med AI...', clearText: 'Rensa / Börja om', apiPlaceholder: 'Valfritt: Klistra in Gemini API-nyckel',
@@ -40,7 +42,8 @@ const TRANSLATIONS = {
     tabVoice: 'Röst', tabQuote: 'Offert', tabParts: 'Prisbok', tabSettings: 'Inställ.',
     suggPtfe: 'Gängtejp', suggSilicone: 'Silikon', suggOlives: 'Klämringar', suggDisposal: 'Bortskaffande avgift',
     termsLabel: 'Standardvillkor / Förbehåll', termsDisclaimer: '1. Arbetsområdet måste vara tillgängligt.\n2. Huvudkran måste fungera.\n3. Inget ansvar för rör äldre än 40 år.\n4. Ingen garanti på kundens eget material.\n5. Priset exkluderar dolda fel och parkering.',
-    companyName: 'Företagsnamn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo', customerDetails: 'Kund / Adress', includeTerms: 'Inkludera Villkor', downloadPdf: 'Ladda ner PDF', desc: 'Beskrivning', price: 'Pris'
+    companyName: 'Företagsnamn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo', customerDetails: 'Kund / Adress', includeTerms: 'Inkludera Villkor', downloadPdf: 'Ladda ner PDF', desc: 'Beskrivelse', price: 'Pris',
+    phCompany: 'T.ex. Svensson Rör AB', phOrg: 'Org.nr', phContact: 'Telefon / E-post', resetQuote: 'Återställ offert'
   },
   de: {
     voiceTitle: 'Auftragsaufnahme', voiceDesc: "Sprechen oder tippen Sie. Wir extrahieren Stunden und Teile.", tapToSpeak: 'Sprechen', listening: 'Hört zu...', voicePlaceholder: 'Z.B. Einen 200L Boiler und zwei 22mm Kugelventile ausgetauscht.', buildQuote: 'Angebot erstellen', parsingAi: 'KI verarbeitet...', clearText: 'Löschen / Neu starten', apiPlaceholder: 'Optional: Gemini API-Schlüssel einfügen',
@@ -52,7 +55,8 @@ const TRANSLATIONS = {
     tabVoice: 'Sprache', tabQuote: 'Angebot', tabParts: 'Preisbuch', tabSettings: 'Einstell.',
     suggPtfe: 'Teflonband', suggSilicone: 'Silikon', suggOlives: 'Klemmringe', suggDisposal: 'Entsorgung',
     termsLabel: 'Allgemeine Bedingungen', termsDisclaimer: '1. Arbeitsbereich muss frei zugänglich sein.\n2. Absperrventile müssen funktionieren.\n3. Keine Haftung für Rohre älter als 40 Jahre.\n4. Keine Garantie auf vom Kunden bereitgestellte Teile.\n5. Schließt versteckte Mängel und Parkgebühren aus.',
-    companyName: 'Firmenname', orgNo: 'Steuernummer', contactInfo: 'Kontaktinfo', customerDetails: 'Kunde / Adresse', includeTerms: 'Bedingungen einschließen', downloadPdf: 'PDF Herunterladen', desc: 'Beschreibung', price: 'Preis'
+    companyName: 'Firmenname', orgNo: 'Steuernummer', contactInfo: 'Kontaktinfo', customerDetails: 'Kunde / Adresse', includeTerms: 'Bedingungen einschließen', downloadPdf: 'PDF Herunterladen', desc: 'Beschreibung', price: 'Preis',
+    phCompany: 'Z.B. Müller Sanitär GmbH', phOrg: 'Steuernummer', phContact: 'Telefon / E-Mail', resetQuote: 'Angebot zurücksetzen'
   },
   es: {
     voiceTitle: 'Registro de Trabajo', voiceDesc: "Hable o escriba. Extraemos horas y piezas.", tapToSpeak: 'Tocar para hablar', listening: 'Escuchando...', voicePlaceholder: 'Ej: Reemplazado calentador 200L y dos válvulas de 22mm.', buildQuote: 'Crear Presup.', parsingAi: 'Procesando IA...', clearText: 'Borrar / Empezar de nuevo', apiPlaceholder: 'Opcional: Pegar clave API de Gemini',
@@ -64,7 +68,8 @@ const TRANSLATIONS = {
     tabVoice: 'Voz', tabQuote: 'Presup.', tabParts: 'Catálogo', tabSettings: 'Ajustes',
     suggPtfe: 'Cinta de teflón', suggSilicone: 'Silicona', suggOlives: 'Anillos de compresión', suggDisposal: 'Desecho viejo',
     termsLabel: 'Condiciones Generales', termsDisclaimer: '1. El área debe estar accesible.\n2. Las llaves de paso deben funcionar.\n3. Sin responsabilidad por tuberías de más de 40 años.\n4. Sin garantía en materiales del cliente.\n5. Excluye vicios ocultos y aparcamiento.',
-    companyName: 'Nombre de Empresa', orgNo: 'NIF / CIF', contactInfo: 'Contacto', customerDetails: 'Cliente / Dirección', includeTerms: 'Incluir Condiciones', downloadPdf: 'Descargar PDF', desc: 'Descripción', price: 'Precio'
+    companyName: 'Nombre de Empresa', orgNo: 'NIF / CIF', contactInfo: 'Contacto', customerDetails: 'Cliente / Dirección', includeTerms: 'Incluir Condiciones', downloadPdf: 'Descargar PDF', desc: 'Descripción', price: 'Precio',
+    phCompany: 'Ej. Fontanería López S.L.', phOrg: 'NIF / CIF', phContact: 'Teléfono / Email', resetQuote: 'Restablecer Presup.'
   }
 };
 
@@ -94,6 +99,24 @@ const DEFAULT_PRICE_BOOK = [
   { id: '9', name: '15mm Compression Elbow', code: '8901234', cost: 85, keywords: ['compression elbow', 'klemringsvinkel', 'albue', '15mm albue'] },
   { id: '10', name: 'Wall Box 15mm', code: '9012345', cost: 350, keywords: ['wall box', 'veggboks', '15mm veggboks'] },
 ];
+
+const DEFAULT_PARTS_T = {
+  en: {
+    '1': 'OSO Hotwater 200L', '2': '22mm Ball Valve', '3': '15mm Copper Pipe 2.5m', '4': '110mm PVC Pipe 3m', '5': 'Sink Mixer Tap', '6': '32mm Waste Trap', '7': 'Toilet Bowl', '8': 'Flush Button', '9': '15mm Compression Elbow', '10': 'Wall Box 15mm'
+  },
+  no: {
+    '1': 'OSO Hotwater 200L Varmtvannsbereder', '2': 'Kuleventil 22mm', '3': 'Kobberrør 15mm (2.5m)', '4': 'Avlopsrør PVC 110mm (3m)', '5': 'Kjøkkenbatteri', '6': 'Vannlås 32mm', '7': 'Toalettskål', '8': 'Spyleknapp', '9': 'Klemringsvinkel 15mm', '10': 'Veggboks 15mm'
+  },
+  sv: {
+    '1': 'OSO Varmvattenberedare 200L', '2': 'Kulventil 22mm', '3': 'Kopparrör 15mm 2.5m', '4': 'PVC-rör 110mm 3m', '5': 'Köksblandare', '6': 'Vattenlås 32mm', '7': 'Toalettstol', '8': 'Spolknapp', '9': 'Klämringsvinkel 15mm', '10': 'Väggbricka 15mm'
+  },
+  de: {
+    '1': 'OSO Warmwasserspeicher 200L', '2': 'Kugelhahn 22mm', '3': 'Kupferrohr 15mm 2.5m', '4': 'PVC-Rohr 110mm 3m', '5': 'Spültischarmatur', '6': 'Siphon 32mm', '7': 'WC-Becken', '8': 'Spültaste', '9': 'Klemmringverschraubung 15mm', '10': 'Wandscheibe 15mm'
+  },
+  es: {
+    '1': 'Calentador de agua OSO 200L', '2': 'Válvula de bola 22mm', '3': 'Tubo de cobre 15mm 2.5m', '4': 'Tubo de PVC 110mm 3m', '5': 'Grifo monomando', '6': 'Sifón 32mm', '7': 'Inodoro', '8': 'Pulsador', '9': 'Codo de compresión 15mm', '10': 'Caja de pared 15mm'
+  }
+};
 
 const SUGGESTIONS = [
   { tKey: 'suggPtfe', code: 'CONS-01', cost: 25 },
@@ -130,6 +153,17 @@ export default function App() {
   useEffect(() => { localStorage.setItem('plumbbid_settings', JSON.stringify(settings)); }, [settings]);
   useEffect(() => { localStorage.setItem('plumbbid_pricebook', JSON.stringify(priceBook)); }, [priceBook]);
   useEffect(() => { localStorage.setItem('plumbbid_quote', JSON.stringify(quote)); }, [quote]);
+
+  // Dynamically update default part names when language changes
+  useEffect(() => {
+    setPriceBook(prev => prev.map(p => {
+      if (['1','2','3','4','5','6','7','8','9','10'].includes(p.id)) {
+         const localizedName = DEFAULT_PARTS_T[langCode]?.[p.id] || DEFAULT_PARTS_T['en'][p.id];
+         return { ...p, name: localizedName };
+      }
+      return p;
+    }));
+  }, [langCode]);
 
   // Inject PWA meta tags
   useEffect(() => {
@@ -503,10 +537,25 @@ export default function App() {
       window.print();
     };
 
+    const handleResetQuote = () => {
+      setQuote({ laborHours: 0, parts: [], notes: '', customerDetails: '', includeTerms: quote.includeTerms });
+      showToast(t('resetQuote') + "!");
+    };
+
     return (
       <>
       <div className="max-w-2xl mx-auto w-full pb-6 space-y-6 animate-fade-in no-print-area">
         
+        {/* Top Actions: Reset */}
+        <div className="flex justify-end pt-2">
+          <button 
+            onClick={handleResetQuote}
+            className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-red-500 transition-colors bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 active:scale-95"
+          >
+            <Trash2 size={16} /> {t('resetQuote')}
+          </button>
+        </div>
+
         {/* Customer Details Section */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
           <h3 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
@@ -913,15 +962,15 @@ export default function App() {
            <div className="space-y-4">
               <div className="flex flex-col gap-2">
                   <label className="text-slate-600 font-medium">{t('companyName')}</label>
-                  <input type="text" placeholder="e.g. Acme Plumbing AS" className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.companyName || ''} onChange={e => updateSetting('companyName', e.target.value)} />
+                  <input type="text" placeholder={t('phCompany')} className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.companyName || ''} onChange={e => updateSetting('companyName', e.target.value)} />
               </div>
               <div className="flex flex-col gap-2">
                   <label className="text-slate-600 font-medium">{t('orgNo')}</label>
-                  <input type="text" placeholder="e.g. 987 654 321" className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.orgNo || ''} onChange={e => updateSetting('orgNo', e.target.value)} />
+                  <input type="text" placeholder={t('phOrg')} className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.orgNo || ''} onChange={e => updateSetting('orgNo', e.target.value)} />
               </div>
               <div className="flex flex-col gap-2">
                   <label className="text-slate-600 font-medium">{t('contactInfo')}</label>
-                  <input type="text" placeholder="e.g. +47 123 45 678 / post@acme.no" className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.contactInfo || ''} onChange={e => updateSetting('contactInfo', e.target.value)} />
+                  <input type="text" placeholder={t('phContact')} className="border-2 border-slate-100 rounded-lg p-2 font-medium focus:border-orange-500 w-full" value={settings.contactInfo || ''} onChange={e => updateSetting('contactInfo', e.target.value)} />
               </div>
            </div>
         </div>
