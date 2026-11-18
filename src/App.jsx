@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Mic, MicOff, Calculator, Book, Settings, Trash2,
   Plus, Check, Wrench, AlertTriangle, FileText,
-  Upload, Copy, Box, Download, Building2, History, X, ClipboardList
+  Upload, Copy, Box, Download, Building2, History, X, ClipboardList, EyeOff
 } from 'lucide-react';
 
 // Safe numeric parser to guarantee no NaN values ever appear in calculations
@@ -23,9 +23,10 @@ const TRANSLATIONS = {
     tabVoice: 'Voice', tabQuote: 'Quote', tabParts: 'Parts', tabSettings: 'Settings',
     suggPtfe: 'PTFE Tape', suggSilicone: 'Silicone Sealant', suggOlives: 'Compression Olives', suggDisposal: 'Old Unit Disposal',
     termsLabel: 'Standard Terms / Disclaimers', termsDisclaimer: 'The quote assumes free access, tight and functioning stopcocks, and that existing pipework is in regulatory condition under 40 years old. Damage to old/adjacent equipment during dismantling, or to unknown hidden pipes/cables, is only covered in cases of gross negligence and will be repaired at cost. Additional work due to hidden defects, building work, electrician, and parking will be charged extra. We only install approved equipment; no equipment warranty is provided for customer-supplied equipment, and extra work is billed according to time and materials.',
-    companyName: 'Company Name', orgNo: 'Org. No / Tax ID', contactInfo: 'Contact (Phone/Email)', customerDetails: 'Customer Name / Address', includeTerms: 'Include Terms & Disclaimers', downloadPdf: 'Download / Share PDF', desc: 'Description', price: 'Price',
+    companyName: 'Company Name', orgNo: 'Org. No / Tax ID', contactInfo: 'Contact (Phone/Email)', customerDetails: 'Customer Name / Address', includeTerms: 'Include Terms & Disclaimers', downloadPdf: 'Download / Share PDF', desc: 'Description', price: 'Price', unitPrice: 'Unit Price', lineTotal: 'Line Total',
     phCompany: 'e.g. Smith Plumbing Ltd', phOrg: 'Tax / Reg. No', phContact: 'Phone / Email', resetQuote: 'Reset Quote', history: 'History', historyEmpty: 'No recent quotes.',
-    normal: 'Normal (1.0x)', evening: 'Evening (+50%)', weekend: 'Weekend (+100%)', multiplier: 'Rate Multiplier', loadQuote: 'Open'
+    normal: 'Normal (1.0x)', evening: 'Evening (+50%)', weekend: 'Weekend (+100%)', multiplier: 'Rate Multiplier', loadQuote: 'Open',
+    privateMarkupNote: 'Wholesale & markup % hidden from customer exports'
   },
   no: {
     voiceTitle: 'Jobbregistrering', voiceDesc: 'Snakk eller skriv inn jobbdetaljene. Vi trekker automatisk ut timer og deler.', tapToSpeak: 'Trykk for å snakke', listening: 'Lytter...', voicePlaceholder: 'F.eks., Byttet en 200L varmtvannsbereder og to 22mm kuleventiler. Brukte ca 3 timer.', buildQuote: 'Bygg tilbud', parsingAi: 'Tolker med AI...', clearText: 'Tøm / Start på nytt',
@@ -38,9 +39,10 @@ const TRANSLATIONS = {
     tabVoice: 'Stemme', tabQuote: 'Tilbud', tabParts: 'Prisbok', tabSettings: 'Innstill.',
     suggPtfe: 'Gjengeteip', suggSilicone: 'Silikon', suggOlives: 'Klemringer', suggDisposal: 'Kassering / Miljøgebyr',
     termsLabel: 'Standard Forbehold', termsDisclaimer: 'Tilbudet forutsetter fri tilgang, tette og fungerende stoppekraner, samt at eksisterende røranlegg er i forskriftsmessig stand under 40 år. Skader på gammelt/tilstøtende utstyr ved demontering, eller på ukjente skjulte rør/kabler, dekkes kun ved grov uaktsomhet og utbedres til kostpris. Tilleggsarbeid grunnet skjulte feil, bygningsmessig arbeid, elektriker og parkering kommer i tillegg. Vi monterer kun godkjent utstyr; på kundelevert utstyr gis ingen utstyrsgaranti, og merarbeid faktureres etter medgått tid og materiell.',
-    companyName: 'Firmanavn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo (Tlf/E-post)', customerDetails: 'Kunde / Adresse', includeTerms: 'Inkluder Forbehold i tilbud', downloadPdf: 'Last ned som PDF', desc: 'Beskrivelse', price: 'Pris',
+    companyName: 'Firmanavn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo (Tlf/E-post)', customerDetails: 'Kunde / Adresse', includeTerms: 'Inkluder Forbehold i tilbud', downloadPdf: 'Last ned som PDF', desc: 'Beskrivelse', price: 'Pris', unitPrice: 'Enhetspris', lineTotal: 'Sum',
     phCompany: 'F.eks. Hansen Rør AS', phOrg: 'Org.nr (9 siffer)', phContact: 'Telefon / E-post', resetQuote: 'Nullstill tilbud', history: 'Historikk', historyEmpty: 'Ingen tidligere tilbud.',
-    normal: 'Normal (1.0x)', evening: 'Kveld (+50%)', weekend: 'Helg (+100%)', multiplier: 'Overtid / Utrykning', loadQuote: 'Åpne'
+    normal: 'Normal (1.0x)', evening: 'Kveld (+50%)', weekend: 'Helg (+100%)', multiplier: 'Overtid / Utrykning', loadQuote: 'Åpne',
+    privateMarkupNote: 'Innkjøpspris og påslag % skjules for kunden'
   },
   sv: {
     voiceTitle: 'Jobbregistrering', voiceDesc: 'Prata eller skriv in dina jobbdetaljer.', tapToSpeak: 'Tryck för att prata', listening: 'Lyssnar...', voicePlaceholder: 'T.ex., Bytte en 200L varmvattenberedare.', buildQuote: 'Skapa offert', parsingAi: 'Tolkar med AI...', clearText: 'Rensa / Börja om',
@@ -48,14 +50,15 @@ const TRANSLATIONS = {
     summary: 'Sammanfattning', laborFee: 'Arbete', extraFees: 'Avgifter', matCost: 'Material', markup: 'Påslag', subtotal: 'Subtotal', vat: 'Moms', total: 'Total', copyQuote: 'Kopiera kundoffert', copyList: 'Kopiera plocklista',
     quoteCopied: 'Offert kopierad!', listCopied: 'Plocklista kopierad!',
     profEst: 'Offert', laborServ: 'Arbete & Tjänster:', materialsParts: 'Material:', grandTotal: 'Totalsumma:', valid30: 'Giltig i 30 dagar.', supplyList: 'Plocklista', reqAsap: 'Behövs ASAP.',
-    localPb: 'Lokal Prisbok', addPart: 'Ny del', searchParts: 'Sök...', noPartsFound: 'Inga delar.',
+    localPb: 'Lokal Prisbok', addPart: 'Ny del', searchParts: 'Søk...', noPartsFound: 'Inga delar.',
     ratesFees: 'Priser & Avgifter', hourlyRate: 'Timpris', serviceCar: 'Servicebil', toll: 'Vägtull', parking: 'Parkering', matMarkup: 'Påslag %', vatMva: 'Moms %', loc: 'Lokalisering', currency: 'Valuta', dictLang: 'Språk',
     tabVoice: 'Röst', tabQuote: 'Offert', tabParts: 'Prisbok', tabSettings: 'Inställ.',
     suggPtfe: 'Gängtejp', suggSilicone: 'Silikon', suggOlives: 'Klämringar', suggDisposal: 'Bortskaffande',
     termsLabel: 'Förbehåll', termsDisclaimer: '1. Arbetsområdet måste vara tillgängligt.\n2. Huvudkran måste fungera.',
-    companyName: 'Företagsnamn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo', customerDetails: 'Kund / Adress', includeTerms: 'Inkludera Villkor', downloadPdf: 'Ladda ner PDF', desc: 'Beskrivning', price: 'Pris',
+    companyName: 'Företagsnamn', orgNo: 'Org.nr', contactInfo: 'Kontaktinfo', customerDetails: 'Kund / Adress', includeTerms: 'Inkludera Villkor', downloadPdf: 'Ladda ner PDF', desc: 'Beskrivelse', price: 'Pris', unitPrice: 'Enhetspris', lineTotal: 'Summa',
     phCompany: 'T.ex. Svensson Rör AB', phOrg: 'Org.nr', phContact: 'Telefon', resetQuote: 'Återställ', history: 'Historik', historyEmpty: 'Inga offerter.',
-    normal: 'Normal', evening: 'Kväll (+50%)', weekend: 'Helg (+100%)', multiplier: 'Övertid', loadQuote: 'Öppna'
+    normal: 'Normal', evening: 'Kväll (+50%)', weekend: 'Helg (+100%)', multiplier: 'Övertid', loadQuote: 'Öppna',
+    privateMarkupNote: 'Inköpspris och påslag % döljs för kunden'
   },
   de: {
     voiceTitle: 'Auftragsaufnahme', voiceDesc: 'Sprechen oder tippen Sie.', tapToSpeak: 'Sprechen', listening: 'Hört zu...', voicePlaceholder: 'Z.B. Einen Boiler ausgetauscht.', buildQuote: 'Angebot erstellen', parsingAi: 'KI verarbeitet...', clearText: 'Löschen',
@@ -68,9 +71,10 @@ const TRANSLATIONS = {
     tabVoice: 'Sprache', tabQuote: 'Angebot', tabParts: 'Preisbuch', tabSettings: 'Einstell.',
     suggPtfe: 'Teflonband', suggSilicone: 'Silikon', suggOlives: 'Klemmringe', suggDisposal: 'Entsorgung',
     termsLabel: 'Bedingungen', termsDisclaimer: '1. Arbeitsbereich muss frei zugänglich sein.',
-    companyName: 'Firmenname', orgNo: 'Steuernummer', contactInfo: 'Kontaktinfo', customerDetails: 'Kunde / Adresse', includeTerms: 'Bedingungen', downloadPdf: 'PDF Herunterladen', desc: 'Beschreibung', price: 'Preis',
+    companyName: 'Firmenname', orgNo: 'Steuernummer', contactInfo: 'Kontaktinfo', customerDetails: 'Kunde / Adresse', includeTerms: 'Bedingungen', downloadPdf: 'PDF Herunterladen', desc: 'Beschreibung', price: 'Preis', unitPrice: 'Einzelpreis', lineTotal: 'Gesamt',
     phCompany: 'Z.B. Müller Sanitär', phOrg: 'Steuernummer', phContact: 'Telefon', resetQuote: 'Zurücksetzen', history: 'Verlauf', historyEmpty: 'Kein Verlauf.',
-    normal: 'Normal', evening: 'Abend (+50%)', weekend: 'Wochenende (+100%)', multiplier: 'Überstunden', loadQuote: 'Öffnen'
+    normal: 'Normal', evening: 'Abend (+50%)', weekend: 'Wochenende (+100%)', multiplier: 'Überstunden', loadQuote: 'Öffnen',
+    privateMarkupNote: 'Einkaufspreis & Aufschlag % für Kunden ausgeblendet'
   },
   es: {
     voiceTitle: 'Registro', voiceDesc: 'Hable o escriba.', tapToSpeak: 'Tocar para hablar', listening: 'Escuchando...', voicePlaceholder: 'Ej: Reemplazado calentador.', buildQuote: 'Crear Presup.', parsingAi: 'Procesando...', clearText: 'Borrar',
@@ -83,9 +87,10 @@ const TRANSLATIONS = {
     tabVoice: 'Voz', tabQuote: 'Presup.', tabParts: 'Catálogo', tabSettings: 'Ajustes',
     suggPtfe: 'Cinta de teflón', suggSilicone: 'Silicona', suggOlives: 'Anillos de compresión', suggDisposal: 'Desecho viejo',
     termsLabel: 'Condiciones', termsDisclaimer: '1. El área debe estar accesible.',
-    companyName: 'Empresa', orgNo: 'NIF', contactInfo: 'Contacto', customerDetails: 'Cliente', includeTerms: 'Incluir Condiciones', downloadPdf: 'Descargar PDF', desc: 'Descripción', price: 'Precio',
+    companyName: 'Empresa', orgNo: 'NIF', contactInfo: 'Contacto', customerDetails: 'Cliente', includeTerms: 'Incluir Condiciones', downloadPdf: 'Descargar PDF', desc: 'Descripción', price: 'Precio', unitPrice: 'Precio unit.', lineTotal: 'Importe',
     phCompany: 'Ej. Fontanería López', phOrg: 'NIF', phContact: 'Teléfono', resetQuote: 'Restablecer', history: 'Historial', historyEmpty: 'No hay historial.',
-    normal: 'Normal', evening: 'Tarde (+50%)', weekend: 'Finde (+100%)', multiplier: 'Multiplicador', loadQuote: 'Abrir'
+    normal: 'Normal', evening: 'Tarde (+50%)', weekend: 'Finde (+100%)', multiplier: 'Multiplicador', loadQuote: 'Abrir',
+    privateMarkupNote: 'Costo mayorista y margen % ocultos al cliente'
   }
 };
 
@@ -303,6 +308,7 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
   const multiplierVal = toNum(quote.multiplier) || 1;
   const markupPercentVal = toNum(settings.markupPercent);
   const vatPercentVal = toNum(settings.vatPercent);
+  const markupFactor = 1 + markupPercentVal / 100;
 
   const serviceCarVal = quote.includeServiceCar ? toNum(quote.serviceCarFee) : 0;
   const tollVal = quote.includeToll ? toNum(quote.tollFee) : 0;
@@ -328,13 +334,15 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
     });
   };
 
+  // Customer-facing SMS / WhatsApp / Email quote:
+  // NEVER exposes wholesale cost or markup %. Shows only final marked-up unit price & line total.
   const generateCustomerQuoteText = () => {
     let text = `${t('profEst')}\n\n`;
     if (quote.notes) text += `${quote.notes}\n\n`;
     text += `${t('laborServ')}\n`;
 
     const rateLabel = multiplierVal > 1 ? `${t('labor')} (${multiplierVal}x)` : t('labor');
-    text += `- ${rateLabel} (${hoursVal} ${t('hrs')}): ${formatMoney(laborCost)}\n`;
+    text += `- ${rateLabel} (${hoursVal} ${t('hrs')} @ ${formatMoney(hourlyRateVal * multiplierVal)}): ${formatMoney(laborCost)}\n`;
 
     if (quote.includeServiceCar) text += `- ${t('serviceCar')}: ${formatMoney(serviceCarVal)}\n`;
     if (quote.includeToll) text += `- ${t('toll')}: ${formatMoney(tollVal)}\n`;
@@ -345,8 +353,9 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
       text += `${t('materialsParts')}\n`;
       quote.parts.forEach((p) => {
         const q = toNum(p.quantity);
-        const priceWithMarkup = toNum(p.cost) * (1 + markupPercentVal / 100);
-        text += `- ${q}x ${p.name || 'Item'} (${formatMoney(priceWithMarkup * q)})\n`;
+        const customerUnitPrice = toNum(p.cost) * markupFactor;
+        const lineTotal = customerUnitPrice * q;
+        text += `- ${q}x ${p.name || 'Item'} @ ${formatMoney(customerUnitPrice)} = ${formatMoney(lineTotal)}\n`;
       });
       text += `\n`;
     }
@@ -570,7 +579,7 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
           </div>
         </div>
 
-        {/* Parts Section */}
+        {/* Parts Section (Plumber's Private Editing View — Wholesale editable here) */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -604,6 +613,9 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
             )}
             {quote.parts.map((part, index) => {
               const partCostNum = toNum(part.cost);
+              const partQtyNum = toNum(part.quantity);
+              const customerUnit = partCostNum * markupFactor;
+              const customerLine = customerUnit * partQtyNum;
               return (
                 <div
                   key={part.quoteItemId || index}
@@ -672,13 +684,19 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
                       />
                     </div>
                   </div>
+                  {partCostNum > 0 && (
+                    <div className="flex justify-between items-center text-xs text-slate-500 pt-2 border-t border-slate-100">
+                      <span>{t('unitPrice')}: <strong className="text-slate-700">{formatMoney(customerUnit)}</strong></span>
+                      <span>{t('lineTotal')}: <strong className="text-slate-800">{formatMoney(customerLine)}</strong></span>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Grand Total Summary Card */}
+        {/* Grand Total Summary Card (Plumber's Private View) */}
         <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500 rounded-full opacity-10 blur-3xl transform translate-x-10 -translate-y-10 pointer-events-none"></div>
 
@@ -705,6 +723,10 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
                 + {markupPercentVal}% {t('markup')}:
               </span>
               <span>{formatMoney(materialsMarkupAmount)}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 pt-1">
+              <EyeOff size={12} className="text-orange-400 shrink-0" />
+              <span>{t('privateMarkupNote')}</span>
             </div>
 
             <div className="flex justify-between font-bold mt-4 pt-4 border-t border-slate-700 text-lg text-white">
@@ -817,7 +839,7 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
         </div>
       )}
 
-      {/* Print/PDF Section */}
+      {/* Print/PDF Section (Customer-Facing: ONLY final marked-up unit price & line total, NO wholesale or markup %) */}
       <div className="print-only-area hidden">
         <div className="flex justify-between border-b-2 border-slate-200 pb-6 mb-6">
           <div>
@@ -847,8 +869,8 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
             <tr className="border-b-2 border-slate-800 text-left text-slate-700">
               <th className="pb-3 font-bold">{t('desc') || 'Description'}</th>
               <th className="pb-3 text-right font-bold">{t('qty')}</th>
-              <th className="pb-3 text-right font-bold">{t('price') || 'Price'}</th>
-              <th className="pb-3 text-right font-bold">{t('total')}</th>
+              <th className="pb-3 text-right font-bold">{t('unitPrice') || t('price')}</th>
+              <th className="pb-3 text-right font-bold">{t('lineTotal') || t('total')}</th>
             </tr>
           </thead>
           <tbody className="text-slate-800">
@@ -886,13 +908,14 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
             )}
             {quote.parts.map((p, i) => {
               const q = toNum(p.quantity);
-              const priceWithMarkup = toNum(p.cost) * (1 + markupPercentVal / 100);
+              const customerUnitPrice = toNum(p.cost) * markupFactor;
+              const lineTotal = customerUnitPrice * q;
               return (
                 <tr key={i} className="border-b border-slate-100">
                   <td className="py-3 font-medium">{p.name}</td>
                   <td className="py-3 text-right">{q}</td>
-                  <td className="py-3 text-right">{formatMoney(priceWithMarkup)}</td>
-                  <td className="py-3 text-right font-semibold">{formatMoney(priceWithMarkup * q)}</td>
+                  <td className="py-3 text-right">{formatMoney(customerUnitPrice)}</td>
+                  <td className="py-3 text-right font-semibold">{formatMoney(lineTotal)}</td>
                 </tr>
               );
             })}
@@ -912,7 +935,7 @@ function QuoteView({ quote, setQuote, settings, priceBook, quoteHistory, formatM
               <span className="font-bold">{formatMoney(tax)}</span>
             </div>
             <div className="flex justify-between py-4 text-xl border-t-2 border-slate-800 mt-2 text-slate-900">
-              <span className="font-black">{t('grandTotal')}:</span>
+              <span className="font-black">{t('grandTotal')}</span>
               <span className="font-black">{formatMoney(total)}</span>
             </div>
           </div>
